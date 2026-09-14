@@ -4,6 +4,7 @@ import { Database } from '@/types/db';
 type TableName = keyof Database['public']['Tables'];
 
 export const db = {
+  supabase,
   async findMany<T extends TableName>(table: T, select?: string) {
     const { data, error } = await supabase.from(table).select(select || '*');
     if (error) throw error;
