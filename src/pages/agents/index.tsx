@@ -1,11 +1,11 @@
+import React, { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
-import { Table } from '@/components/ui/Table';
-import { Button } from '@/components/ui/Button';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { Agent } from '@/types/agent';
+import Link from 'next/link';
+import { Button } from '@/components/ui/Button';
+import { Table } from '@/components/ui/Table';
 
-export default function AgentsPage() {
+const AgentsPage: React.FC = () => {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +30,7 @@ export default function AgentsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this agent?')) return;
+
     try {
       const response = await fetch(`/api/agents/${id}`, {
         method: 'DELETE',
@@ -46,7 +47,6 @@ export default function AgentsPage() {
   if (loading) return <MainLayout><div>Loading agents...</div></MainLayout>;
   if (error) return <MainLayout><div className="text-red-500">Error: {error}</div></MainLayout>;
 
-  const tableHeaders = ['Name', 'Status', 'API Key', 'Actions'];
   const tableData = agents.map((agent) => [
     agent.name,
     agent.status,
@@ -72,8 +72,10 @@ export default function AgentsPage() {
       {agents.length === 0 ? (
         <p>No agents found. Create one to get started!</p>
       ) : (
-        <Table headers={tableHeaders} data={tableData} />
+        <Table headers={['Name', 'Status', 'API Key', 'Actions']} data={tableData} />
       )}
     </MainLayout>
   );
-}
+};
+
+export default AgentsPage;

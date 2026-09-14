@@ -1,30 +1,19 @@
 import { Agent } from '@/types/agent';
 
-export interface ElevenLabsTTSConfig {
-  voice_id: string;
-  model_id?: string;
-  voice_settings?: {
-    stability?: number;
-    similarity_boost?: number;
-    style?: number;
-    use_speaker_boost?: boolean;
-  };
-}
+const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY || 'YOUR_ELEVENLABS_API_KEY';
+const ELEVENLABS_BASE_URL = 'https://api.elevenlabs.io/v1';
 
 export const elevenLabsService = {
-  async generateAudio(
-    text: string,
-    config: ElevenLabsTTSConfig
-  ): Promise<ArrayBuffer> {
-    const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-    if (!ELEVENLABS_API_KEY) {
-      throw new Error('ELEVENLABS_API_KEY is not set in environment variables.');
+  async generateVoice(text: string, agent: Agent): Promise<string> {
+    if (!agent.persona_config || !(agent.persona_config as any).voice_id) {
+      throw new Error('Agent persona_config or voice_id not found for ElevenLabs');
     }
 
-    const { voice_id, model_id = 'eleven_multilingual_v2', voice_settings } = config;
+    const voiceId = (agent.persona_config as any).voice_id;
+    const modelId = (agent.persona_config as any).model_id || 'eleven_monolingual_v1';
+    const voiceSettings = (agent.persona_config as any).voice_settings || { stability: 0.5, similarity_boost: 0.75 };
 
-    const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voice_id}`,
+    const response = await fetch(`${ELEVENLABS_BASE_URL}/text-to-speech/${voiceId}`,
       {
         method: 'POST',
         headers: {
@@ -33,17 +22,22 @@ export const elevenLabsService = {
         },
         body: JSON.stringify({
           text,
-          model_id,
-          voice_settings,
+          model_id: modelId,
+          voice_settings: voiceSettings,
         }),
       }
     );
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(`ElevenLabs API error: ${response.status} - ${errorData.detail || response.statusText}`);
+      throw new Error(`ElevenLabs API error: ${response.status} - ${JSON.stringify(errorData)}`);
     }
 
-    return await response.arrayBuffer();
+    const audioBuffer = await response.arrayBuffer();
+    // In a real application, you would upload this audioBuffer to a storage service (e.g., Supabase Storage)
+    // and return the public URL. For now, we'll return a placeholder or base64 encode it.
+    // For simplicity, returning a base64 encoded string for now.
+    const base64Audio = Buffer.from(audioBuffer).toString('base64');
+    return `data:audio/mpeg;base64,${base64Audio}`;
   },
 };

@@ -1,10 +1,10 @@
+import React, { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { AgentForm } from '@/components/agents/AgentForm';
 import { UpdateAgentPayload, Agent } from '@/types/agent';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
-export default function AgentDetailPage() {
+const EditAgentPage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const [agent, setAgent] = useState<Agent | null>(null);
@@ -31,22 +31,21 @@ export default function AgentDetailPage() {
     }
   }, [id]);
 
-  const handleSubmit = async (data: UpdateAgentPayload) => {
+  const handleSubmit = async (payload: UpdateAgentPayload) => {
     try {
       const response = await fetch(`/api/agents/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.message || 'Failed to update agent');
       }
 
-      alert('Agent updated successfully!');
       router.push('/agents');
     } catch (error: any) {
       alert(`Failed to update agent: ${error.message}`);
@@ -63,4 +62,6 @@ export default function AgentDetailPage() {
       <AgentForm initialData={agent} onSubmit={handleSubmit} isEdit />
     </MainLayout>
   );
-}
+};
+
+export default EditAgentPage;

@@ -1,27 +1,27 @@
+import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { KnowledgeBaseForm } from '@/components/knowledge-bases/KnowledgeBaseForm';
 import { CreateKnowledgeBasePayload } from '@/types/knowledgeBase';
 import { useRouter } from 'next/router';
 
-export default function NewKnowledgeBasePage() {
+const NewKnowledgeBasePage: React.FC = () => {
   const router = useRouter();
 
-  const handleSubmit = async (data: CreateKnowledgeBasePayload) => {
+  const handleSubmit = async (payload: CreateKnowledgeBasePayload) => {
     try {
       const response = await fetch('/api/knowledge-bases', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.message || 'Failed to create knowledge base');
       }
 
-      alert('Knowledge Base created successfully!');
       router.push('/knowledge-bases');
     } catch (error: any) {
       alert(`Failed to create knowledge base: ${error.message}`);
@@ -34,4 +34,6 @@ export default function NewKnowledgeBasePage() {
       <KnowledgeBaseForm onSubmit={handleSubmit} />
     </MainLayout>
   );
-}
+};
+
+export default NewKnowledgeBasePage;

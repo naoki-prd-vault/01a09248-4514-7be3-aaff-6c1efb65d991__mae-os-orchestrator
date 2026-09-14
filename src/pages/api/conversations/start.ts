@@ -1,22 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiResponse } from 'next';
 import { conversationService } from '@/services/conversationService';
 import { InitiateConversationPayload } from '@/types/conversation';
-import { agentService } from '@/services/agentService';
+import { authenticateApiKey, NextApiRequestWithAgent } from '@/lib/auth';
 
-export default async function handler(
-  req: NextApiRequest,
+const handler = async (
+  req: NextApiRequestWithAgent,
   res: NextApiResponse
-) {
+) => {
   if (req.method === 'POST') {
     try {
-      const { agent_id, client_user_id }: InitiateConversationPayload = req.body;
-
-      // In a real scenario, the agent_id would be derived from the API key
-      // or explicitly passed and validated.
-      // For now, we assume agent_id is provided in the body.
-      if (!agent_id) {
-        return res.status(400).json({ message: 'agent_id is required' });
-      }
+      const { client_user_id }: InitiateConversationPayload = req.body;
+      const agent_id = req.agent!.id; // agent_id is derived from authenticated agent
 
       const sessionId = await conversationService.initiateConversation({
         agent_id,
@@ -31,4 +25,7 @@ export default async function handler(
     res.setHeader('Allow', ['POST']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-}
+};
+
+export default authenticateApiKey(handler);
+

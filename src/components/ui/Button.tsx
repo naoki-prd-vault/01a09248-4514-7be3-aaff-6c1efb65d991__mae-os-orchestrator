@@ -1,32 +1,34 @@
 import React from 'react';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'sm' | 'md' | 'lg';
+  variant?: 'default' | 'secondary' | 'danger';
+  size?: 'default' | 'sm' | 'lg';
 }
 
 export const Button: React.FC<ButtonProps> = ({
+  className,
+  variant = 'default',
+  size = 'default',
   children,
-  variant = 'primary',
-  size = 'md',
-  className = '',
   ...props
 }) => {
-  const baseStyle = 'font-bold py-2 px-4 rounded';
+  const baseStyles = 'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+
   const variantStyles = {
-    primary: 'bg-blue-500 hover:bg-blue-700 text-white',
-    secondary: 'bg-gray-300 hover:bg-gray-400 text-gray-800',
-    danger: 'bg-red-500 hover:bg-red-700 text-white',
+    default: 'bg-primary text-primary-foreground hover:bg-primary/90',
+    secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+    danger: 'bg-red-500 text-white hover:bg-red-600',
   };
+
   const sizeStyles = {
-    sm: 'text-sm',
-    md: 'text-base',
-    lg: 'text-lg',
+    default: 'h-10 px-4 py-2',
+    sm: 'h-9 rounded-md px-3',
+    lg: 'h-11 rounded-md px-8',
   };
 
   return (
     <button
-      className={`${baseStyle} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+      className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className || ''}`}
       {...props}
     >
       {children}

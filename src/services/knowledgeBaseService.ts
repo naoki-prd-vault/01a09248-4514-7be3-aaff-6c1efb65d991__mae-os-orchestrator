@@ -1,6 +1,6 @@
-import { db } from '@/services/db';
+import { db } from './db';
 import { CreateKnowledgeBasePayload, UpdateKnowledgeBasePayload, KnowledgeBase } from '@/types/knowledgeBase';
-import { createKnowledgeBaseSchema, updateKnowledgeBaseSchema } from '@/schemas/knowledgeBaseSchema';
+import { knowledgeBaseSchema, createKnowledgeBaseSchema, updateKnowledgeBaseSchema } from '@/schemas/knowledgeBaseSchema';
 
 export const knowledgeBaseService = {
   async getAllKnowledgeBases(): Promise<KnowledgeBase[]> {
@@ -25,7 +25,7 @@ export const knowledgeBaseService = {
     return knowledgeBase as KnowledgeBase;
   },
 
-  async deleteKnowledgeBase(id: string): Promise<boolean> {
-    return db.delete('knowledge_bases', id);
+  async deleteKnowledgeBase(id: string): Promise<void> {
+    await db.delete('knowledge_bases', id);
   },
 };

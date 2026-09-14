@@ -1,10 +1,10 @@
+import React, { useEffect, useState } from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { KnowledgeBaseForm } from '@/components/knowledge-bases/KnowledgeBaseForm';
 import { UpdateKnowledgeBasePayload, KnowledgeBase } from '@/types/knowledgeBase';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 
-export default function KnowledgeBaseDetailPage() {
+const EditKnowledgeBasePage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
   const [knowledgeBase, setKnowledgeBase] = useState<KnowledgeBase | null>(null);
@@ -31,22 +31,21 @@ export default function KnowledgeBaseDetailPage() {
     }
   }, [id]);
 
-  const handleSubmit = async (data: UpdateKnowledgeBasePayload) => {
+  const handleSubmit = async (payload: UpdateKnowledgeBasePayload) => {
     try {
       const response = await fetch(`/api/knowledge-bases/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.message || 'Failed to update knowledge base');
       }
 
-      alert('Knowledge Base updated successfully!');
       router.push('/knowledge-bases');
     } catch (error: any) {
       alert(`Failed to update knowledge base: ${error.message}`);
@@ -55,7 +54,7 @@ export default function KnowledgeBaseDetailPage() {
 
   if (loading) return <MainLayout><div>Loading knowledge base...</div></MainLayout>;
   if (error) return <MainLayout><div className="text-red-500">Error: {error}</div></MainLayout>;
-  if (!knowledgeBase) return <MainLayout><div>Knowledge base not found.</div></MainLayout>;
+  if (!knowledgeBase) return <MainLayout><div>Knowledge Base not found.</div></MainLayout>;
 
   return (
     <MainLayout>
@@ -63,4 +62,6 @@ export default function KnowledgeBaseDetailPage() {
       <KnowledgeBaseForm initialData={knowledgeBase} onSubmit={handleSubmit} isEdit />
     </MainLayout>
   );
-}
+};
+
+export default EditKnowledgeBasePage;

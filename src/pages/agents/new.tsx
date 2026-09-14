@@ -1,27 +1,27 @@
+import React from 'react';
 import MainLayout from '@/components/layout/MainLayout';
 import { AgentForm } from '@/components/agents/AgentForm';
 import { CreateAgentPayload } from '@/types/agent';
 import { useRouter } from 'next/router';
 
-export default function NewAgentPage() {
+const NewAgentPage: React.FC = () => {
   const router = useRouter();
 
-  const handleSubmit = async (data: CreateAgentPayload) => {
+  const handleSubmit = async (payload: CreateAgentPayload) => {
     try {
       const response = await fetch('/api/agents', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        throw new Error(errorData.message || 'Failed to create agent');
       }
 
-      alert('Agent created successfully!');
       router.push('/agents');
     } catch (error: any) {
       alert(`Failed to create agent: ${error.message}`);
@@ -34,4 +34,6 @@ export default function NewAgentPage() {
       <AgentForm onSubmit={handleSubmit} />
     </MainLayout>
   );
-}
+};
+
+export default NewAgentPage;
