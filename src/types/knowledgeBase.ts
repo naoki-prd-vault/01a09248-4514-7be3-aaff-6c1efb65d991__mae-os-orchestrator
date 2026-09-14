@@ -1,0 +1,1 @@
+// Type definitions for knowledge bases

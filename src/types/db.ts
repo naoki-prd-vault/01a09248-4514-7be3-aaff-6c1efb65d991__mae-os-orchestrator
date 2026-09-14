@@ -1,0 +1,1 @@
+// Generated Supabase DB types

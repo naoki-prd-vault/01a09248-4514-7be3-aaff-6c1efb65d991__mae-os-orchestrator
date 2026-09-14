@@ -1,0 +1,1 @@
+// Zod schema for knowledge base validation
