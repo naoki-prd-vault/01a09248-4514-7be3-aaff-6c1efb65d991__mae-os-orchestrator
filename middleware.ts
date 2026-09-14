@@ -1,0 +1,11 @@
+import { withAuth } from "next-auth/middleware";
+
+export default withAuth({
+  pages: {
+    signIn: "/auth/signin",
+  },
+});
+
+export const config = {
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|auth/signin).*) exclusion for public assets and auth page "],
+};
