@@ -1,7 +1,9 @@
+import MainLayout from '@/components/layout/MainLayout';
+
 export default function SettingsPage() {
   return (
-    <div>
+    <MainLayout>
       <h1>Settings</h1>
-    </div>
+    </MainLayout>
   );
 }

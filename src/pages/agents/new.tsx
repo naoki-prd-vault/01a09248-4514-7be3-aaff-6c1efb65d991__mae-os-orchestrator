@@ -1,7 +1,9 @@
+import MainLayout from '@/components/layout/MainLayout';
+
 export default function NewAgentPage() {
   return (
-    <div>
+    <MainLayout>
       <h1>New Agent</h1>
-    </div>
+    </MainLayout>
   );
 }

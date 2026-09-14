@@ -1,7 +1,9 @@
+import MainLayout from '@/components/layout/MainLayout';
+
 export default function AgentDetailPage() {
   return (
-    <div>
+    <MainLayout>
       <h1>Agent Detail</h1>
-    </div>
+    </MainLayout>
   );
 }
